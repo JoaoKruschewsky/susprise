@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quebra-Cabeça do Amor</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .puzzle-container {
+            width: 300px;
+            height: 300px;
+            display: flex;
+            flex-wrap: wrap;
+            margin: 20px auto;
+            position: relative;
+        }
+        .piece {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #000;
+            background-size: 300px 300px;
+            cursor: pointer;
+            position: absolute;
+            transition: all 0.3s;
+        }
+        #final-message {
+            display: none;
+            background: pink;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .buttons button {
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            transition: 0.1s;
+        }
+        .buttons button:hover {
+            background: darkred;
+        }
+        #no-button {
+            position: absolute; 
+        }
+        #next-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="title"> Nois juntinho! Quero ve se manja mesmo negadinha ❤️,  </h1>
+    <div class="puzzle-container" id="puzzle"></div>
+    <div id="next-container">
+        <input type="checkbox" id="completed-check" onchange="enableNext()"> Concluí
+        <button id="next-button" onclick="nextImage()" disabled>Próxima</button>
+    </div>
+    <div id="final-message">
+        <h2>Vamos amadurecer e tentar melhorar? Pense como a gnt resolvia tudo antes iremos nos dar bem morando juntos! Volta cm eu❤️</h2>
+        <div class="buttons">
+            <button onclick="alert('Sabia que diria sim! ❤️')">Sim</button>
+            <button id="no-button">Não</button>
+        </div>
+    </div>
+    <script>
+        const titles = [
+    " Nois juntinho! Quero ve se manja mesmo negadinha ❤️,",
+    "Nos curtindo nossa primeira viajens de muitas ainnhee ❤️",
+    "Festinha que nois vai curtir muito que vamo morar junto heuehue ❤️",
+    "E agora nois juntinhos te amoo muito voltaa com euu ❤️",
+    "De negodinho para a linda nega dinha que mora num meu coracion"
+];
+        const images = ['nos.jpeg', 'festas.jpeg', 'viajens.jpeg', 'fist.jpeg'];
+        let currentImage = 0;
+        let pieces = [];
+        let selectedPiece = null;
+        let positions = [];
+
+        function shuffle(array) {
+            let shuffled = array.slice();
+            do {
+                shuffled.sort(() => Math.random() - 0.5);
+            } while (shuffled.every((val, i) => val === i));
+            return shuffled;
+        }
+
+        function loadPuzzle() {
+            document.getElementById("next-container").style.display = "block";
+            document.getElementById("completed-check").checked = false;
+            document.getElementById("next-button").disabled = true;
+            const puzzle = document.getElementById("puzzle");
+            puzzle.innerHTML = "";
+            pieces = shuffle([...Array(9).keys()]);
+            positions = [...pieces];
+            pieces.forEach((pos, index) => {
+                let piece = document.createElement("div");
+                piece.classList.add("piece");
+                piece.style.backgroundImage = `url(${images[currentImage]})`;
+                piece.style.backgroundPosition = `-${(pos % 3) * 100}px -${Math.floor(pos / 3) * 100}px`;
+                piece.style.left = `${(index % 3) * 100}px`;
+                piece.style.top = `${Math.floor(index / 3) * 100}px`;
+                piece.dataset.index = index;
+                piece.onclick = () => selectPiece(index);
+                puzzle.appendChild(piece);
+            });
+        }
+
+        function selectPiece(index) {
+            if (selectedPiece === null) {
+                selectedPiece = index;
+            } else {
+                swap(selectedPiece, index);
+                selectedPiece = null;
+            }
+        }
+
+        function swap(index1, index2) {
+    let pieces = document.querySelectorAll(".piece");
+
+    // Pegando as peças corretas
+    let piece1 = pieces[index1];
+    let piece2 = pieces[index2];
+
+    // Salvando as posições
+    let tempLeft = piece1.style.left;
+    let tempTop = piece1.style.top;
+
+    // Trocando posições visuais apenas entre as duas peças clicadas
+    piece1.style.left = piece2.style.left;
+    piece1.style.top = piece2.style.top;
+    piece2.style.left = tempLeft;
+    piece2.style.top = tempTop;
+
+    // Atualizando as posições no array
+    [positions[index1], positions[index2]] = [positions[index2], positions[index1]];
+
+    checkCompletion();
+}
+
+        function updatePuzzle() {
+            document.querySelectorAll(".piece").forEach((piece, index) => {
+                let pos = positions[index];
+                piece.style.left = `${(pos % 3) * 100}px`;
+                piece.style.top = `${Math.floor(pos / 3) * 100}px`;
+            });
+        }
+
+        function checkCompletion() {
+            if (positions.every((val, i) => val === i)) {
+                document.getElementById("completed-check").checked = true;
+                enableNext();
+            }
+        }
+
+       
+
+        function enableNext() {
+            let checkbox = document.getElementById("completed-check");
+            let nextButton = document.getElementById("next-button");
+            nextButton.disabled = !checkbox.checked;
+        }
+
+        function nextImage() {
+            let checkbox = document.getElementById("completed-check");
+            
+            currentImage++;
+            console.log(currentImage)
+            document.getElementById("title").innerText = titles[currentImage];
+            if (currentImage < images.length) {
+                loadPuzzle();
+            } else {
+                document.getElementById("puzzle").style.display = "none";
+                document.getElementById("next-container").style.display = "none";
+                document.getElementById("final-message").style.display = "block";
+            }
+        }
+
+        document.getElementById("no-button").addEventListener("mouseover", function() {
+            this.style.left = Math.random() * (95 - 5) + 5 + "%";
+            this.style.top = Math.random() * (95 - 5) + 5 + "%";
+        });
+        
+        loadPuzzle();
+    </script>
+</body>
+</html>
