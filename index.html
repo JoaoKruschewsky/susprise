@@ -186,10 +186,13 @@
             }
         }
 
-        document.getElementById("no-button").addEventListener("mouseover", function() {
+        document.getElementById("no-button").addEventListener("mouseover", moveButton);
+        document.getElementById("no-button").addEventListener("click", moveButton);
+
+        function moveButton() {
             this.style.left = Math.random() * (95 - 5) + 5 + "%";
             this.style.top = Math.random() * (95 - 5) + 5 + "%";
-        });
+        }
         
         loadPuzzle();
     </script>
