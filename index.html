@@ -48,9 +48,7 @@
             margin: 10px;
             transition: 0.1s;
         }
-        .buttons button:hover {
-            background: darkred;
-        }
+      
         #no-button {
             position: absolute; 
         }
@@ -64,13 +62,13 @@
     <div class="puzzle-container" id="puzzle"></div>
     <div id="next-container">
         <input type="checkbox" id="completed-check" onchange="enableNext()"> Concluí
-        <button id="next-button" onclick="nextImage()" disabled>Próxima</button>
+        <button id="next-button" onclick="nextImage()"  disabled>Próxima</button>
     </div>
     <div id="final-message">
         <h2>Vamos amadurecer e tentar melhorar? Pense como a gnt resolvia tudo antes iremos nos dar bem morando juntos! Volta cm eu❤️</h2>
         <div class="buttons">
             <button onclick="alert('Sabia que diria sim! ❤️')">Sim</button>
-            <button id="no-button">Não</button>
+            <button id="no-button"  onmouseover="desvia(this)" onclick="desvia(this)">Não</button>
         </div>
     </div>
     <script>
@@ -186,12 +184,15 @@
             }
         }
 
-        document.getElementById("no-button").addEventListener("mouseover", moveButton);
-        document.getElementById("no-button").addEventListener("click", moveButton);
+        function desvia(btn) {
+            btn.style.position = 'absolute';
+            btn.style.bottom = geraPosicao(10, 90);
+            btn.style.left = geraPosicao(10, 90);
+            console.log('opa, desviei...');
+        }
 
-        function moveButton() {
-            this.style.left = Math.random() * (95 - 5) + 5 + "%";
-            this.style.top = Math.random() * (95 - 5) + 5 + "%";
+        function geraPosicao(min, max) {
+            return (Math.random() * (max - min) + min) + "%";
         }
         
         loadPuzzle();
